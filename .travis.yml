@@ -1,5 +1,8 @@
 language: java
-sudo: false
+
+jdk:
+  - openjdk11
+
 script:
   - java --version
   - mvn test -B
