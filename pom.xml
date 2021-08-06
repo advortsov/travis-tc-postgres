@@ -1,0 +1,152 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.3</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>ru.advortsov</groupId>
+    <artifactId>demo</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>demo</name>
+    <description>Demo project for Spring Boot</description>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <db.url>jdbc:tc:postgresql:13:///sakila?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/postgres-sakila-schema.sql</db.url>
+        <db.username>postgres</db.username>
+        <db.password>postgres</db.password>
+
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
+
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Database access -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.jooq</groupId>-->
+        <!--            <artifactId>jooq</artifactId>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.15.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+            <version>4.13.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>11</release>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>java-generator</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+
+                        <!--                        <configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd">-->
+                        <configuration>
+                            <!-- Configure the database connection here -->
+                            <jdbc>
+                                <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
+                                <url>${db.url}</url>
+                                <user>${db.username}</user>
+                                <password>${db.password}</password>
+                            </jdbc>
+
+                            <generator>
+                                <database>
+                                    <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                                    <includes>.*</includes>
+                                    <inputSchema>public</inputSchema>
+                                </database>
+
+                                <generate/>
+
+                                <target>
+                                    <!-- The destination package of your generated classes (within the
+                                         destination directory)
+
+                                         jOOQ may append the schema name to this package if generating multiple schemas,
+                                         e.g. org.jooq.your.packagename.schema1
+                                              org.jooq.your.packagename.schema2 -->
+                                    <packageName>org.jooq.db</packageName>
+
+                                    <!-- The destination directory of your generated classes -->
+                                    <!--                                    <directory>/path/to/your/dir</directory>-->
+                                </target>
+                            </generator>
+                        </configuration>
+
+
+                    </execution>
+                </executions>
+
+                <dependencies>
+
+                    <!-- Junit seems to be a transitive dependency of testcontainers? -->
+                    <dependency>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                        <version>4.13.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>
