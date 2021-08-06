@@ -1,8 +1,11 @@
 language: java
 
 jdk:
-  - openjdk11
+  - openjdk-ea
+
+cache:
+  directories:
+    - $HOME/.m2
 
 script:
-  - java --version
   - mvn test -B
